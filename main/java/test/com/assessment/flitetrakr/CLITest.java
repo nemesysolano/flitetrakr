@@ -22,26 +22,29 @@ public class CLITest {
 		CLI cli = new CLI(input, System.out);
 		
 		System.out.println(
-			String.format(
-				"testCLIWithResourceStream('%s')",
-				resourcePath
-			)
-		);
+				String.format(
+					"testCLIWithResourceStream('%s')",
+					resourcePath
+				)
+			);		
 		cli.process();
+		
+		
 	}
 	
 	@Test
-	public void testCLIWithFileStream() throws IOException {
-		
-		String dataFilePath = dataDir + File.separatorChar + "europe.txt";
-		
+	public void testCLIWithFileStream() throws IOException {		
+		String dataFilePath = dataDir + File.separatorChar + "europe.txt";		
 		CLI cli = new CLI(new FileInputStream(dataFilePath), System.out);
+
 		System.out.println(
-			String.format(
-				"testCLIWithFileStream('%s')",
-				dataFilePath
-			)
-		);		
+				String.format(
+					"testCLIWithFileStream('%s')",
+					dataFilePath
+				)
+			);		
 		cli.process();
+
+		
 	}
 }
