@@ -35,8 +35,7 @@ public class CLI {
 	}
 	
 	/**
-	 * <p>Reads connections data and questions from <code>this.input</code> and the
-	 * prints expected feedback.</p>
+	 * <p>Reads connections data and questions from <code>this.input</code> and the prints expected feedback.</p>
 	 * <p>This method must be called after successful instantiation.</p>
 	 * @throws IOException If <code>this.input</code> is closed.
 	 */

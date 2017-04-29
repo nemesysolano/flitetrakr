@@ -6,6 +6,11 @@
 apply plugin: 'java-library'
 apply plugin: 'java-library-distribution'
 
+archivesBaseName = 'flitetrakr'
+version = '1.0-SNAPSHOT'
+group = 'com.assessment'
+rootProject.libsDirName = '../target'
+
 test {
   testLogging {
     events "passed", "skipped", "failed", "standardOut", "standardError"
@@ -26,9 +31,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-configurations {
-    jar.archiveName = 'flitetrakr.jar'
-}
 
 sourceSets {
   main {

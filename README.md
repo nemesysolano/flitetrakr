@@ -1,6 +1,6 @@
-# Project Title
+# Flight Tracker
 
-One Paragraph of project description goes here
+This CLI application reads a flight connection table (including prices) and then answers questions about stops and prices.
 
 ## Getting Started
 

@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+	http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.assessment</groupId>
+  <artifactId>flitetrakr</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>Flight Tracker</name>
+  <url>https://github.com/nemesysolano/flitetrakr</url>
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <build>
+
+	  <testSourceDirectory>main/java/test</testSourceDirectory>
+	  <testResources>
+	  	<testResource>
+	  		<directory>main/java/test</directory>
+	  	</testResource>
+	  </testResources>
+	  <sourceDirectory>main/java/src</sourceDirectory>
+	  
+	  <testOutputDirectory>build/classes</testOutputDirectory>
+	  <outputDirectory>build/classes</outputDirectory>
+
+	 <plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<configuration>
+			  <archive>
+				<manifest>
+					<mainClass>com.assessment.flitetrakr.CLI</mainClass>
+				</manifest>
+			  </archive>
+			</configuration>
+			</plugin>	 
+	 </plugins> 
+	 	  
+	  
+  </build>  
+	
+</project>
