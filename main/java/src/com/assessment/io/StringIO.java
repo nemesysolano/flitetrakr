@@ -23,7 +23,9 @@ public class StringIO {
 		String line;
 		
 		while((line = reader.readLine()) != null) {
-			lines.add(line);
+			line = line.trim();
+			if(line.length() > 0)
+				lines.add(line);
 		}
 		
 		return lines;

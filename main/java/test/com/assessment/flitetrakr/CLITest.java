@@ -15,6 +15,10 @@ import org.junit.Test;
 public class CLITest {
 	String dataDir = System.getProperty("CONNECTIONS_DATA") + File.separatorChar + "data";
 	
+	/**
+	 * <p>Reads and processes the resource file named as <code>/com/assessment/flitetrakr/cli-test1.txt</code>.</p>
+	 * @throws IOException
+	 */
 	@Test
 	public void testCLIWithResourceStream() throws IOException {
 		String resourcePath = "/com/assessment/flitetrakr/cli-test1.txt";
@@ -32,6 +36,10 @@ public class CLITest {
 		
 	}
 	
+	/**
+	 * <p>Reads and processes the a physical file specified via the system property named as <code>CONNECTIONS_DATA</code>.</p>
+	 * @throws IOException
+	 */
 	@Test
 	public void testCLIWithFileStream() throws IOException {		
 		String dataFilePath = dataDir + File.separatorChar + "europe.txt";		

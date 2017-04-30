@@ -26,6 +26,7 @@ public class CLI {
 	
 	/**
 	 * <p>Initializes instance fields whose names match parameters'.</p>
+	 * 
 	 * @param input Input stream through which the application receives connections data and questions.
 	 * @param output Output stream used to provide feedback. 
 	 */
@@ -36,6 +37,7 @@ public class CLI {
 	
 	/**
 	 * <p>Reads connections data and questions from <code>this.input</code> and the prints expected feedback.</p>
+	 * 
 	 * <p>This method must be called after successful instantiation.</p>
 	 * @throws IOException If <code>this.input</code> is closed.
 	 */
@@ -54,15 +56,24 @@ public class CLI {
 	 * @throws IOException 
 	 */
 	public static void main(String args[]) throws IOException {
-		InputStream input;
+		InputStream input = null;
 		CLI instance;
 		
-		if(args.length > 0)
-			input = new FileInputStream(args[0]);
-		else
-			input = System.in;
-		
-		instance = new CLI(input, System.out);
-		instance.process();
+		try{
+			
+			if(args.length > 0){
+				input = new FileInputStream(args[0]);
+			}
+			else {
+				input = System.in;
+			}
+			
+			instance = new CLI(input, System.out);
+			instance.process();
+			
+		}finally {
+			if(input != System.in)
+				input.close();
+		}
 	}
 }

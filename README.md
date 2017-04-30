@@ -2,6 +2,15 @@
 
 This CLI application reads a flight connection table (including prices) and then answers questions about stops and prices.
 
+## Implementation Notes.
+
+A valid price list contains multiple values will be separated by a comma and an optional whitespace; additionally, the line containing the price list will have the prefix "Connections:". Some extra assumptions besides those requirements are verified:
+1) The whitespace is single occurrence of the ASCII '\x32' character.
+2) There is no whitespace between the word 'Connections' and the ':' (colon) character.
+3) A whitespace exist expected between ':' and the 1st value.
+4) No white space is expected between a value and the following comma.
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -31,6 +40,7 @@ until finished
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
+
 
 ## Running the tests
 
