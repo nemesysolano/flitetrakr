@@ -28,7 +28,7 @@ public class DataSet {
 	 */
 	public static Pattern CONNECTIONS_TABLE_PATTERN = Pattern.compile(
 		String.format(
-			"^CONNECTIONS:\\x20%s(%s%s)*$",
+			"^Connections:\\x20%s(%s%s)*$",
 			CONNECTION_PATTERN,
 			CONNECTION_SEPARATOR_PATTERN,
 			CONNECTION_PATTERN
@@ -56,7 +56,7 @@ public class DataSet {
 	 * @throws java.text.ParseException If <b><code>connections</code></b> is not a valid connections table.
 	 */
 	public DataSet(String connections) throws ParseException {
-		String trimmed = connections.trim().toUpperCase();
+		String trimmed = connections.trim();
 		Matcher matcher = CONNECTIONS_TABLE_PATTERN.matcher(trimmed);
 		
 		if(!matcher.matches()){
