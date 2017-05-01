@@ -1,14 +1,19 @@
 package com.assessment.flitetrakr;
 
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
 import com.assessment.data.AdjacencyMatrix;
-import com.assessment.data.DirectedGraph;
+import com.assessment.io.StringIO;
 
-
+/**
+ * <p>This class contains the functions that perform queries against flights adjacency matrix.</p>
+ * @author rsolano
+ *
+ */
 public class Query {
 	
 	/**
@@ -23,6 +28,102 @@ public class Query {
 	public Query(AdjacencyMatrix adjacencyMatrix) {
 		this.adjacencyMatrix = adjacencyMatrix;
 	}
+
+	/**
+	 * <p>This function finds all connections from <b></code>sourceCode</code></b> to <b></code>destinationCode</code></b> below a specified price.</p>
+	 * @param upperPrice Upper limit of the price range.
+	 * @param sourceCode Departure airport's code.
+	 * @param destinationCode Destination airport's code.
+	 * @return How many connections exist below the specified price ( connection price &lt; <b></code>upperPrice</code></b>).
+	 */
+	public String connectionsBelowPrice(int upperPrice, String sourceCode, String destinationCode) {
+		List<LinkedList<String>> connections = this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirst(sourceCode, destinationCode);
+		
+		List<LinkedList<String>> roundTripsFromDestination = this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirst(destinationCode, destinationCode);
+		
+		LinkedList<String> selectedConnections = new LinkedList<String>();
+
+		/**
+		 * Selects connections whose price is less than upperPrice (price < upperPrice).
+		 */
+		for(LinkedList<String> connection: connections) {						
+
+			if(connectionPrice(connection) < upperPrice) {
+				selectedConnections.add(this.formatConnection(connection));
+			}
+			
+			for(LinkedList<String> roundTrip: roundTripsFromDestination) {
+				LinkedList<String> copy = new LinkedList<String>();
+				
+				copy.addAll(connection);
+				copy.removeLast();				
+				copy.addAll(roundTrip);
+				
+				if(connectionPrice(copy) < upperPrice) {
+					selectedConnections.add(this.formatConnection(copy));
+				}
+			
+			}
+			
+		}
+		
+		
+		String[] sorted = new String[selectedConnections.size()];
+		
+		selectedConnections.toArray(sorted);
+		
+		Arrays.sort(
+			sorted,
+			new Comparator<String>() {				
+				public int compare(String o1, String o2) {
+					int pos1 = o1.lastIndexOf('-');
+					int pos2 = o2.lastIndexOf('-');
+					int price1 = Integer.parseInt(o1.substring(pos1 + 1));					
+					int price2 = Integer.parseInt(o2.substring(pos2 + 1));		
+					
+					return price1 - price2;
+				}
+			}
+		);
+		
+		return StringIO.join(sorted, StringIO.DEFAULT_LIST_SEPARATOR);
+	}
+	
+	
+	
+	/**
+	 * <p>This function addresses the question of how many different connections with minimum ??? stops exist between ??? and ??? ? </p>
+	 * @param stops Maximum number of stops. A stop is a landing in an intermediary city.
+	 * @param sourceCode Departure airport's code.
+	 * @param destinationCode Destination airport's code.
+	 * @return How many connections comply with the aforementioned criteria.
+	 */
+	public int connectionsWithMinimumStops(int stops, String sourceCode, String destinationCode) {
+		List<LinkedList<String>> connections = this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirst(sourceCode, destinationCode);				
+		
+		int count = 0;
+		
+		for(LinkedList<String> connection: connections) {
+			int flightStops = connection.size()-2; // source and destination airports are not stops.
+			
+			if(flightStops >= stops) { 
+				
+				/* Uncomment for deugging *
+				DirectedGraph.printPath(connection);
+				/* */
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
 	
 	/**
 	 * <p>This function addresses the question of how many different connections with maximum ??? stops exist between ??? and ??? ? </p>
@@ -34,14 +135,18 @@ public class Query {
 	public int connectionsWithMaximumStops(int stops, String sourceCode, String destinationCode) {
 		List<LinkedList<String>> connections = this.adjacencyMatrix.
 				getDirectedGraph().
-				depthFirst(sourceCode, destinationCode);		
+				depthFirst(sourceCode, destinationCode);				
+		
 		int count = 0;
 		
 		for(LinkedList<String> connection: connections) {
 			int flightStops = connection.size()-2; // source and destination airports are not stops.
 			
 			if(flightStops <= stops) { 
+				
+				/* Uncomment for debugging*
 				DirectedGraph.printPath(connection);
+				/* */
 				count++;
 			}
 		}
@@ -60,23 +165,28 @@ public class Query {
 		List<LinkedList<String>> connections = this.adjacencyMatrix.
 				getDirectedGraph().
 				depthFirst(sourceCode, destinationCode);		
-		int count = 0;
+		
+		int count = 0;		
 		
 		for(LinkedList<String> connection: connections) {
 			int flightStops = connection.size()-2; // source and destination airports are not stops.
 			
 			if(flightStops == stops) { 
+				
+				/* Uncomment for debugging *
 				DirectedGraph.printPath(connection);
+				/* */
 				count++;
 			}
 		}
 		
 		return count;
 	}	
+	
 	/**
 	 * <p>This function addresses the question of what is the price of the connection ???-???-... ? </p>
 	 * @param codes An array of airport codes representing a connection; 1st element is the connection's source and last one is the connection's destionation.
-	 * @return A non zero/negative integer if <b><code>code</code></b> represents a valid connection. On the contrary, this function returns -1.
+	 * @return -1 if no connection having those codes exist, or a positive integer indicating the connection cost. 
 	 */
 	public int connectionPrice(String[] codes) {
 		if(!this.adjacencyMatrix.getDirectedGraph().connectionExists(codes)) {
@@ -95,6 +205,19 @@ public class Query {
 		
 		return price;
 	}
+	
+	/**
+	 * p>This function addresses the question of what is the price of the connection ???-???-... ? </p>
+	 * @param connection
+	 * @return -1 if no connection having those codes exist, or a positive integer indicating the connection PRICE. 
+	 */
+	public int connectionPrice(LinkedList<String> connection) {
+		String[] codes = new String[connection.size()];
+		
+		connection.toArray(codes);
+		
+		return connectionPrice(codes);
+	}	
 	
 	/**
 	 * <p>Calculates the shortest path between two airports.</p>

@@ -2,6 +2,7 @@ package com.assessment.data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -122,7 +123,8 @@ public class DirectedGraph {
 
     static private List<LinkedList<String>> depthFirstRoundTrip(DirectedGraph graph, String start) {
 		Collection<String> nodes = graph.getNodeSet();
-		List<LinkedList<String>> rounTrips = new ArrayList<LinkedList<String>>();
+		HashSet<ComparableStringList> rounTrips = new HashSet<ComparableStringList>();
+		List<LinkedList<String>> result = new ArrayList<LinkedList<String>>();
 		
 		nodes.remove(start);
 		
@@ -130,37 +132,24 @@ public class DirectedGraph {
 			List<LinkedList<String>> departures =  depthFirstNoRoundTrip(graph, start, end);			
 			List<LinkedList<String>> arrivals =  depthFirstNoRoundTrip(graph, end, start);
 				
-			/* Enable this section for debugging purposes. *	
-			System.out.println("departures");
-			printPaths(departures);
-			
-			System.out.println("arrivals");
-			printPaths(arrivals);
-						
-			System.out.println("roundtrips");
-			/* */
-			
 			for(LinkedList<String> departure: departures) {
 				
 				for(LinkedList<String> arrival: arrivals ) {		
-					LinkedList<String> roundTrip = new LinkedList<String>();
-					
-					rounTrips.add(roundTrip);
+					ComparableStringList roundTrip = new ComparableStringList();
+										
 					roundTrip.addAll(departure);									
 					roundTrip.addAll(arrival);
 					roundTrip.remove(departure.size()-1);
-					/* Enable this break for debugging purposes *
-					printPath(roundTrip);
-					/* */
-				}
-				
-			}
-			/* Enable this break for debugging purposes.*			
-			break;
-			/* */
+					rounTrips.add(roundTrip);
+				}								
+			}			
 		}
-		
-		return rounTrips;
+
+		/**
+		 * 
+		 */
+		result.addAll(rounTrips);
+		return result;
 	}
     
     static private List<LinkedList<String>> depthFirstNoRoundTrip(DirectedGraph graph, String start, String end) {
@@ -172,7 +161,8 @@ public class DirectedGraph {
         
         return result;
         
-    }    
+    }  
+    
     static private void depthFirst(DirectedGraph graph, LinkedList<String> visited, List<LinkedList<String>> result, String end) {
         LinkedList<String> nodes = graph.adjacentNodes(visited.getLast());
         
