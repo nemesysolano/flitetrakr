@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.assessment.data.AdjacencyMatrix;
-import com.assessment.data.DirectedGraph;
 
 public class AdjacencyMatrixTest {
 	

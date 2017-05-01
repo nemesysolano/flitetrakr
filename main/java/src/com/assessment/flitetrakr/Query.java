@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import com.assessment.data.AdjacencyMatrix;
+import com.assessment.data.DirectedGraph;
 
 
 public class Query {
@@ -23,9 +24,57 @@ public class Query {
 		this.adjacencyMatrix = adjacencyMatrix;
 	}
 	
-
 	/**
-	 * <p>This function addresses the question of what is the price of the connection NUE-LHR-BOS? </p>
+	 * <p>This function addresses the question of how many different connections with maximum ??? stops exist between ??? and ??? ? </p>
+	 * @param stops Maximum number of stops. A stop is a landing in an intermediary city.
+	 * @param sourceCode Departure airport's code.
+	 * @param destinationCode Destination airport's code.
+	 * @return How many connections comply with the aforementioned criteria.
+	 */
+	public int connectionsWithMaximumStops(int stops, String sourceCode, String destinationCode) {
+		List<LinkedList<String>> connections = this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirst(sourceCode, destinationCode);		
+		int count = 0;
+		
+		for(LinkedList<String> connection: connections) {
+			int flightStops = connection.size()-2; // source and destination airports are not stops.
+			
+			if(flightStops <= stops) { 
+				DirectedGraph.printPath(connection);
+				count++;
+			}
+		}
+		
+		return count;
+	}
+	
+	/**
+	 * This function addresses the question of how many different connections with exactly ??? stops exist between ??? and ??? ?
+	 * @param stops Number of expected stops. A stop is a landing in an intermediary city.
+	 * @param sourceCode Departure airport's code.
+	 * @param destinationCode Destination airport's code.
+	 * @return How many connections comply with the aforementioned criteria.
+	 */
+	public int connectionsWithExactStops(int stops, String sourceCode, String destinationCode) {
+		List<LinkedList<String>> connections = this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirst(sourceCode, destinationCode);		
+		int count = 0;
+		
+		for(LinkedList<String> connection: connections) {
+			int flightStops = connection.size()-2; // source and destination airports are not stops.
+			
+			if(flightStops == stops) { 
+				DirectedGraph.printPath(connection);
+				count++;
+			}
+		}
+		
+		return count;
+	}	
+	/**
+	 * <p>This function addresses the question of what is the price of the connection ???-???-... ? </p>
 	 * @param codes An array of airport codes representing a connection; 1st element is the connection's source and last one is the connection's destionation.
 	 * @return A non zero/negative integer if <b><code>code</code></b> represents a valid connection. On the contrary, this function returns -1.
 	 */
@@ -37,7 +86,6 @@ public class Query {
 		String sourceCode = codes[0];
 		String destinationCode = codes[1];
 		int price = this.adjacencyMatrix.get(sourceCode, destinationCode);
-		int length = this.adjacencyMatrix.length();
 		
 		for(int i = 2; i < codes.length ; i++) {
 			sourceCode = destinationCode;
@@ -66,10 +114,13 @@ public class Query {
 			adjacencyMatrix.getIndex(sourceCode);
 			adjacencyMatrix.getIndex(destinationCode);
 			
-			List<LinkedList<String>> connections = this.adjacencyMatrix.getDirectedGraph().depthFirst(sourceCode, destinationCode);
+			List<LinkedList<String>> connections = this.adjacencyMatrix.
+					getDirectedGraph().
+					depthFirst(sourceCode, destinationCode);
 			
 			if(connections.size() > 0) {
-				LinkedList<String> connection = this.getShortestConnection(connections);
+				LinkedList<String> connection = this.cheapestConnection(connections);
+				
 				result = this.formatConnection(connection);
 			}else {
 				result = CONNECTION_NOT_FOUND_ERROR;
@@ -83,26 +134,13 @@ public class Query {
 		
 	}
 	
-	private String formatConnection(LinkedList<String> connection) {
-		int totalDistance = calculateTotalDistance(connection); //TODO: This step is suboptimal.
-		StringBuilder buffer = new StringBuilder();
-		
-		for(String code: connection) {
-			buffer.append(code);
-			buffer.append('-');
-		}
-		buffer.append(totalDistance);
-		
-		return buffer.toString();
-	}
-	
 	/**
-	 * <p>Finds the shortest path in path list.</p>
+	 * <p>Finds the cheapest connection the given connection list.</p>
 	 * 
 	 * @param connections A list whose elements are sublists. Each sublist represent a connection between two airports.
 	 * @return The shortest path in the given path list or null if the list is empty.
 	 */
-	private LinkedList<String> getShortestConnection(List<LinkedList<String>> connections) {
+	private LinkedList<String> cheapestConnection(List<LinkedList<String>> connections) {
 		ListIterator<LinkedList<String>> iterator = connections.listIterator();
 		LinkedList<String> shortestConnection = iterator.next();
 		int currentTotalDistance = calculateTotalDistance(shortestConnection);
@@ -119,7 +157,22 @@ public class Query {
 			
 		}
 		return shortestConnection; 
+	}	
+	
+	private String formatConnection(LinkedList<String> connection) {
+		int totalDistance = calculateTotalDistance(connection); //TODO: This step is suboptimal.
+		StringBuilder buffer = new StringBuilder();
+		
+		for(String code: connection) {
+			buffer.append(code);
+			buffer.append('-');
+		}
+		buffer.append(totalDistance);
+		
+		return buffer.toString();
 	}
+	
+	
 	
 	/**
 	 * <p>Calculates the total distance between path's starting and ending node.</p>

@@ -92,7 +92,6 @@ public class AdjacencyMatrix {
 	 */
 	private DirectedGraph createDirectedGraph(String[][] connectionRecords) {
 		DirectedGraph graph = new DirectedGraph();
-		int length = connectionRecords.length;
 		
 		for(String[] record: connectionRecords) {
 			String sourceCode = record[0];

@@ -206,7 +206,7 @@ public class DirectedGraph {
     }
 
 	
-    static void printPath(LinkedList<String> visited) {
+    public static void printPath(LinkedList<String> visited) {
         for (String node : visited) {
             System.out.print(node);
             System.out.print(' ');
@@ -214,7 +214,7 @@ public class DirectedGraph {
         System.out.println();
     }
     
-    static void printPaths(List<LinkedList<String>> paths) {
+    public static void printPaths(List<LinkedList<String>> paths) {
         for (LinkedList<String> path : paths) {
         	printPath(path);
         }
