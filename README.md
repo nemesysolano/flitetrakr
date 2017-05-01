@@ -4,13 +4,16 @@ This CLI application reads a flight connection table (including prices) and then
 
 ## Implementation Notes.
 
-A valid price list contains multiple values separated by a comma and an optional whitespace; additionally, the line containing the price list will have the prefix "Connections:". Some extra assumptions besides those requirements are verified:
+### Extra Considerations About the Price List.
+
+A valid price list contains multiple values separated by a comma followed by an optional whitespace; additionally, the line containing the price list will have the prefix 'Connections:'. Some extra assumptions besides those requirements are verified:
 1) The whitespace is single occurrence of the ASCII '\x32' character.
 2) There is no whitespace between the word 'Connections' and the ':' (colon) character.
-3) A whitespace exist expected between ':' and the 1st value.
-4) No white space is expected between a value and the following comma.
-5) The price list parser is case sensitive, therefore airport codes like 'SDQ' and 'sdq' are considered equal.
-6) The prefix validation is case sensitive and stringent. Words like 'CONNECTIONS' or 'Connection' are rejected.
+3) A whitespace exist between the ':' character and the 1st value.
+4) No whitespace is expected between a value and the following comma, but --as implied by requirements-- is required between the comma and the next value.
+5) The price list parser is case sensitive, therefore airport codes like 'SDQ' and 'sdq' are considered different.
+6) Airport codes must be alphanumeric.  
+7) The prefix validation is case sensitive and stringent. Words like 'CONNECTIONS' or 'Connection' are rejected.
 
 ## Getting Started
 

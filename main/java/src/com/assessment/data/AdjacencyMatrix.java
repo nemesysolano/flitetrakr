@@ -1,16 +1,19 @@
-package com.assessment.flitetrakr;
+package com.assessment.data;
 
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.*;
+
+
 /**
- * <p>This class models a connections dataset. A dataset is built from a string that represent a price list;</p>
+ * <p>Adjacency matrix whose weights are the flight fares and its row/columns coordinates are mapped to airport codes.</p>
  * <p>The format of each connection will be defined by <br/><b><code>&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;</code></b>; so e.g. AMS-PDX-617. Multiple values will be separated by a comma and an optional whitespace. The line containing the price list will have the prefix <b><code>Connections:</code></b></p>
  * @author rsolano
  *
  */
-public class DataSet {
+public class AdjacencyMatrix {
 
 	/**
 	 * Regular expression that describes single connection in the connections string.
@@ -39,7 +42,7 @@ public class DataSet {
 		
 	/**
 	 * <p>Connections table.</p>
-	 * <p>This two dimensional array contain the fare prices (in euros) between airports. 
+	 * <p>This two dimensional array contains the fare prices (in euros) between airports. 
 	 */
 	int[][] connectionsTable;
 	
@@ -49,13 +52,23 @@ public class DataSet {
 	Map<String, Integer> connectionsIndex;
 	
 	/**
+	 *  This map indexes airport codes to <b><code>this.connectionsTable</code></b>'s row/columns.
+	 */
+	Map<Integer, String> connectionsReverseIndex;
+	
+	/**
+	 * Directed graph used to keep track of source and destination ends. 
+	 */
+	DirectedGraph directedGraph;
+	
+	/**
 	 * <p>Parses the string representing the connections table. Airport codes are regarded as case insensitive.</p>
 	 * <p>&nbsp;</p>
 	 * 
 	 * @param line A string representing a price list; this string is the first line in the input stream.
 	 * @throws java.text.ParseException If <b><code>connections</code></b> is not a valid connections table.
 	 */
-	public DataSet(String connections) throws ParseException {
+	public AdjacencyMatrix(String connections) throws ParseException {
 		String trimmed = connections.trim();
 		Matcher matcher = CONNECTIONS_TABLE_PATTERN.matcher(trimmed);
 		
@@ -66,9 +79,46 @@ public class DataSet {
 		String[][] connectionRecords = extractConnectionRecords(trimmed);
 		
 		this.connectionsIndex = createConnectionsIndex(connectionRecords);
+		this.connectionsReverseIndex = createConnectionsReverseIndex(this.connectionsIndex);
 		this.connectionsTable = createConnectionsTable(connectionRecords, this.connectionsIndex);
+		this.directedGraph = createDirectedGraph(connectionRecords);
 	}
 	
+	/**
+	 * <p>Creates the directed graph used to keep track of source and destination ends. 
+	 * @param adjacencyMatrix Adjacency matrix whose weights are the flight fares and its row/columns coordinates are mapped to airport codes.
+	 * 
+	 * @return A new instance of <code><b>com.assessment.data.DirectedGraph</b></code>.
+	 */
+	private DirectedGraph createDirectedGraph(String[][] connectionRecords) {
+		DirectedGraph graph = new DirectedGraph();
+		int length = connectionRecords.length;
+		
+		for(String[] record: connectionRecords) {
+			String sourceCode = record[0];
+			String destinationCode = record[1];
+			
+			graph.addEdge(sourceCode, destinationCode);
+		}
+		
+		return graph;
+	}
+	
+	/**
+	 * 
+	 * @param connectionsIndex A map that indexes airport codes to <b><code>this.connectionsTable</code></b>'s row/columns.
+	 * @return This map indexes <b><code>this.connectionsTable</code></b>'s row/columns by airport codes.
+	 */
+	private Map<Integer, String> createConnectionsReverseIndex(Map<String, Integer> connectionsIndex) {
+		Map<Integer, String> connectionsReverseIndex = new HashMap<Integer, String>();
+		
+		for(Entry<String, Integer> entry: this.connectionsIndex.entrySet()) {
+			connectionsReverseIndex.put(entry.getValue(), entry.getKey());
+		}
+		
+		return connectionsReverseIndex;
+	}
+
 	/**
 	 * <p>Creates a two dimensional array whose elements are sub arrays that represent connection records</p>
 	 * <p>For example: <br/> if <b><code>connections == &quot;Connections: AMS-PDX-617,NUE-AMS-123, AMS-LHR-43&quot;</code></b>, then this function returns<br/>
@@ -81,7 +131,7 @@ public class DataSet {
 	String[][] extractConnectionRecords(String connections) {
 		int colon = connections.indexOf(':');
 		int index = 0;
-		String[] lines = connections.substring(colon+1).split(CONNECTION_SEPARATOR_PATTERN);
+		String[] lines = connections.substring(colon+1).trim().split(CONNECTION_SEPARATOR_PATTERN);
 		String[][] connectionRecords = new String[lines.length][];
 		
 		for(String line: lines) {
@@ -122,11 +172,13 @@ public class DataSet {
 	 * 
 	 * @param connectionRecords A two dimensional array whose elements are sub arrays that represent connection records. This parameter is value returned by <b><code>createConnectionsIndex</code></b>.
 	 * @param connectionsIndex  A map that indexes <b><code>this.connectionsTable</code></b>'s row/columns by airport codes.
-	 * @return
+	 * @return A two dimensional array contains the fare prices (in euros) between airports. 
+	 * @throws ParseException 
 	 */
-	private int[][] createConnectionsTable(String[][] connectionRecords, Map<String, Integer> connectionsIndex) {
+	private int[][] createConnectionsTable(String[][] connectionRecords, Map<String, Integer> connectionsIndex) throws ParseException {
 		int size = connectionsIndex.size();
 		int [][] connectionsTable = new int[size][size];
+
 		
 		for(String[] record: connectionRecords) {
 			String firstCode = record[0];
@@ -135,10 +187,13 @@ public class DataSet {
 			int x = connectionsIndex.get(firstCode);
 			int y = connectionsIndex.get(secondCode);
 			
-			// The table is filled symmetrically in order to speed up search algorithm.
+			if(price == 0)
+				throw new ParseException("Distance between airports must be greather than zero.", 0);
+			
 			connectionsTable[x][y] = price;
 			connectionsTable[y][x] = price;
 		}
+		
 		return connectionsTable;
 	}
 	
@@ -179,6 +234,60 @@ public class DataSet {
 	 */
 	public int length() {
 		return connectionsTable.length;
+	}
+	
+	/**
+	 * 
+	 * @param code airport code.
+	 * @return Returns the row/column offset for the given airport code.
+	 */
+	public int getIndex(String code) {
+		Integer index = connectionsIndex.get(code);
+		if(index == null) {
+			throw new ArrayIndexOutOfBoundsException(
+				String.format(
+					"No entry exists for code='%s", 
+					code
+				)	
+			);
+		}
+			
+		return index.intValue();
+	}
+
+	/**
+	 * 
+	 * @param code airport code.
+	 * @return Returns the row/column offset for the given airport code.
+	 */
+	public String getCode(int index) {
+		String code = connectionsReverseIndex.get(index);
+		if(code == null) {
+			throw new ArrayIndexOutOfBoundsException(
+				String.format(
+					"No entry exists for index='%d", 
+					index
+				)	
+			);
+		}
+			
+		return code;
+	}
+	
+	/**
+	 * 
+	 * @return The two dimensional array containing the fare prices (in euros) between airports. 
+	 */
+	public int[][] getConnectionsTable() {
+		return connectionsTable;
+	}
+
+	/**
+	 * 
+	 * @return com.assessment.data
+	 */
+	public DirectedGraph getDirectedGraph() {
+		return directedGraph;
 	}
 	
 	

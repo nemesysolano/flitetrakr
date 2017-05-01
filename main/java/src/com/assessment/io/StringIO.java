@@ -31,4 +31,22 @@ public class StringIO {
 		return lines;
 		
 	}
+	
+	
+	/**
+	 * <p>Removes all occurrences of <b><code>c</code></b> from <b><code>source</code></b> string.</p>
+	 * @param source Non null character string.
+	 * @param c The character to be removed.
+	 * @return A new string not containing character <b><code>c</code></b.
+	 */
+	public static String removeAll(String source, char c) {
+		StringBuilder buffer = new StringBuilder();
+		
+		for(int i = 0; i < source.length(); i++) {
+			if(source.charAt(i) != c) {
+				buffer.append(source.charAt(i));
+			}
+		}
+		return buffer.toString();
+	}
 }
