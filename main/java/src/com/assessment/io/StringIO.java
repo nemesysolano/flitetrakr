@@ -12,6 +12,11 @@ import java.util.List;
  *
  */
 public class StringIO {
+
+	/**
+	 * Convenience constant for &quot;&quot; value. 
+	 */
+	public static final String EMPTY_STRING = "";
 	
 	/**
 	 * Default list separator.
@@ -84,5 +89,55 @@ public class StringIO {
 		return buffer.toString().trim();
 	}	
 
+	/**
+	 * <p>Remove all whitespace characters (\\s+)</p>
+	 * @param string Source string.
+	 * @return <code><b>null</b></code> if string is null or a new string without any whitespace.
+	 */
+	public static String removeSpaces(String string) {
+		if(string == null) {
+			return string;
+		}
+		
+		return string.trim().replaceAll("\\s", EMPTY_STRING);
+	}
+
+	
+	public static int questionMarkPos(String questionText) {
+		int end = questionText.lastIndexOf('?');
+		
+		if(end == -1) {
+			end = questionText.length();
+		} 		
+		
+		return end;
+	}
+	
+	public static String[] getTerminals(String source, String startKeyWord, String delimiterKeyWord) {
+		int start = source.lastIndexOf(startKeyWord) + startKeyWord.length();
+		int end = questionMarkPos(source);
+		
+		if(end == -1) {
+			end = source.length();
+		} 
+		
+		return source.substring(start, end).trim().split(delimiterKeyWord);
+	}
+	
+	public static String substring(String source, int fromIndex, String start, String end) {
+		int startPos = source.indexOf(start, fromIndex);
+		int endPos = source.indexOf(end, fromIndex);
+		
+		if(startPos == -1 && startPos > endPos) {
+			return null;
+		}
+		
+		return source.substring(startPos + start.length(), endPos).trim();
+	}		
+	
+	
+	public static String substring(String source, String start, String end) {
+		return substring(source, 0, start, end);
+	}
 	
 }

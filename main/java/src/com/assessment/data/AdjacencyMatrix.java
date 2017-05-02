@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
+import com.assessment.io.StringIO;
+
 
 /**
  * <p>Adjacency matrix whose weights are the flight fares and its row/columns coordinates are mapped to airport codes.</p>
@@ -24,14 +26,14 @@ public class AdjacencyMatrix {
 	 * <p>Regular expression that describes separators</p> 
 	 * <p>Multiple values will be separated by a comma (',') and an optional whitespace (\s).</p>
 	 */
-	public static String CONNECTION_SEPARATOR_PATTERN="\\,\\x20?";
+	public static String CONNECTION_SEPARATOR_PATTERN=",";
 	
 	/**
 	 * Regular expression that describes the whole connections string.
 	 */
 	public static Pattern CONNECTIONS_TABLE_PATTERN = Pattern.compile(
 		String.format(
-			"^Connections:\\x20%s(%s%s)*$",
+			"^Connections:%s(%s%s)*$",
 			CONNECTION_PATTERN,
 			CONNECTION_SEPARATOR_PATTERN,
 			CONNECTION_PATTERN
@@ -69,7 +71,7 @@ public class AdjacencyMatrix {
 	 * @throws java.text.ParseException If <b><code>connections</code></b> is not a valid connections table.
 	 */
 	public AdjacencyMatrix(String connections) throws ParseException {
-		String trimmed = connections.trim();
+		String trimmed = StringIO.removeSpaces(connections);
 		Matcher matcher = CONNECTIONS_TABLE_PATTERN.matcher(trimmed);
 		
 		if(!matcher.matches()){

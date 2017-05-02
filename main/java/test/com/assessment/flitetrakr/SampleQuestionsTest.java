@@ -49,7 +49,7 @@ public class SampleQuestionsTest {
 		};
 		
 		for(String question: questionVariants) {
-			nlQuery.evaluate(question);
+			System.out.println(nlQuery.evaluate(question));
 		}
 	}
 		
@@ -62,26 +62,27 @@ public class SampleQuestionsTest {
 			"How many different connections maximum 3 stop exist between NUE and FRA?",
 			"How many connections maximum 3 stop exist between NUE and FRA?",
 			"connections maximum 3 stop exist between NUE and FRA?",
+			"connections maximum 3 stop between NUE and FRA?",
 		};
 		
 		for(String question: questionVariants) {
-			nlQuery.evaluate(question);
+			System.out.println(nlQuery.evaluate(question));
 		}
 	}
 	
 	@Test
 	public void testQuestion4() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
 		String questionVariants[] = {
-			"How  many  different  connections  with  minimum 1  stops  exists  between  NUE  and  FRA ?",
-			"How many different connections with minimum 1 stops exist between NUE and FRA?",
-			"How many different connections minimum 1 stops exist between NUE and FRA?",
-			"How many different connections minimum 1 stop exist between NUE and FRA?",
-			"How many connections minimum 1 stop exist between NUE and FRA?",
-			"connections minimum 1 stop between NUE and FRA?"
+			"How  many  different  connections  with  minimum 1  stops  exists  between  FRA  and  NUE ?",
+			"How many different connections with minimum 1 stops exist between FRA and NUE?",
+			"How many different connections minimum 1 stops exist between FRA and NUE?",
+			"How many different connections minimum 1 stop exist between FRA and NUE?",
+			"How many connections minimum 1 stop exist between FRA and NUE?",
+			"connections minimum 1 stop between FRA and FRA?"
 		};
 		
 		for(String question: questionVariants) {
-			nlQuery.evaluate(question);
+			System.out.println(nlQuery.evaluate(question));
 		}
 	}
 	
