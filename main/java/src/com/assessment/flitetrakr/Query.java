@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
+
 import com.assessment.data.AdjacencyMatrix;
 import com.assessment.io.StringIO;
 
@@ -29,6 +31,7 @@ public class Query {
 		this.adjacencyMatrix = adjacencyMatrix;
 	}
 
+	
 	/**
 	 * <p>This function finds all connections from <b></code>sourceCode</code></b> to <b></code>destinationCode</code></b> below a specified price.</p>
 	 * @param upperPrice Upper limit of the price range.
@@ -36,45 +39,15 @@ public class Query {
 	 * @param destinationCode Destination airport's code.
 	 * @return How many connections exist below the specified price ( connection price &lt; <b></code>upperPrice</code></b>).
 	 */
-	public String connectionsBelowPrice(int upperPrice, String sourceCode, String destinationCode) {
+	public String connectionsBelowPrice(int upperPrice, String sourceCode, String destinationCode) {		
 		List<LinkedList<String>> connections = this.adjacencyMatrix.
 				getDirectedGraph().
-				depthFirst(sourceCode, destinationCode);
-		
-		List<LinkedList<String>> roundTripsFromDestination = this.adjacencyMatrix.
-				getDirectedGraph().
-				depthFirst(destinationCode, destinationCode);
-		
-		LinkedList<String> selectedConnections = new LinkedList<String>();
-
-		/**
-		 * Selects connections whose price is less than upperPrice (price < upperPrice).
-		 */
-		for(LinkedList<String> connection: connections) {						
-
-			if(connectionPrice(connection) < upperPrice) {
-				selectedConnections.add(this.formatConnection(connection));
-			}
-			
-			for(LinkedList<String> roundTrip: roundTripsFromDestination) {
-				LinkedList<String> copy = new LinkedList<String>();
-				
-				copy.addAll(connection);
-				copy.removeLast();				
-				copy.addAll(roundTrip);
-				
-				if(connectionPrice(copy) < upperPrice) {
-					selectedConnections.add(this.formatConnection(copy));
-				}
-			
-			}
-			
-		}
-		
-		
-		String[] sorted = new String[selectedConnections.size()];
-		
-		selectedConnections.toArray(sorted);
+				depthFirstAll(sourceCode, destinationCode);
+		String[] sorted = formatConnections(
+			connections.stream().filter(
+				c -> calculateTotalDistance(c) < upperPrice).collect(Collectors.toList()
+			)
+		);
 		
 		Arrays.sort(
 			sorted,
@@ -106,22 +79,9 @@ public class Query {
 		List<LinkedList<String>> connections = this.adjacencyMatrix.
 				getDirectedGraph().
 				depthFirst(sourceCode, destinationCode);				
+		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 >= stops).collect(Collectors.toList());
 		
-		int count = 0;
-		
-		for(LinkedList<String> connection: connections) {
-			int flightStops = connection.size()-2; // source and destination airports are not stops.
-			
-			if(flightStops >= stops) { 
-				
-				/* Uncomment for deugging *
-				DirectedGraph.printPath(connection);
-				/* */
-				count++;
-			}
-		}
-		
-		return count;
+		return selected.size();
 	}
 	
 	
@@ -135,23 +95,10 @@ public class Query {
 	public int connectionsWithMaximumStops(int stops, String sourceCode, String destinationCode) {
 		List<LinkedList<String>> connections = this.adjacencyMatrix.
 				getDirectedGraph().
-				depthFirst(sourceCode, destinationCode);				
+				depthFirstAll(sourceCode, destinationCode);				
+		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 <= stops).collect(Collectors.toList());
 		
-		int count = 0;
-		
-		for(LinkedList<String> connection: connections) {
-			int flightStops = connection.size()-2; // source and destination airports are not stops.
-			
-			if(flightStops <= stops) { 
-				
-				/* Uncomment for debugging*
-				DirectedGraph.printPath(connection);
-				/* */
-				count++;
-			}
-		}
-		
-		return count;
+		return selected.size();
 	}
 	
 	/**
@@ -164,23 +111,10 @@ public class Query {
 	public int connectionsWithExactStops(int stops, String sourceCode, String destinationCode) {
 		List<LinkedList<String>> connections = this.adjacencyMatrix.
 				getDirectedGraph().
-				depthFirst(sourceCode, destinationCode);		
+				depthFirst(sourceCode, destinationCode);				
+		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 == stops).collect(Collectors.toList());	
 		
-		int count = 0;		
-		
-		for(LinkedList<String> connection: connections) {
-			int flightStops = connection.size()-2; // source and destination airports are not stops.
-			
-			if(flightStops == stops) { 
-				
-				/* Uncomment for debugging *
-				DirectedGraph.printPath(connection);
-				/* */
-				count++;
-			}
-		}
-		
-		return count;
+		return selected.size();
 	}	
 	
 	/**
@@ -282,6 +216,12 @@ public class Query {
 		return shortestConnection; 
 	}	
 	
+	/**
+	 * <p>Formats linked list of string representing a connection.</p>
+	 * <p>The resulting string will match the pattern<br/> <code><b>"&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;,.."</code></b></p>
+	 * @param connection A non null linked list of strings
+	 * @return A string compliant to the aforementioned requirement.
+	 */
 	private String formatConnection(LinkedList<String> connection) {
 		int totalDistance = calculateTotalDistance(connection); //TODO: This step is suboptimal.
 		StringBuilder buffer = new StringBuilder();
@@ -295,7 +235,21 @@ public class Query {
 		return buffer.toString();
 	}
 	
-	
+	/**
+	 * 
+	 * @param connections
+	 * @return An array of strings where each element is a formatted connection.
+	 */
+	private String[] formatConnections(List<LinkedList<String>> connections) {
+		String[] result = new String[connections.size()];
+		int index = 0;
+		
+		for(LinkedList<String> connection: connections) {
+			result[index++] = formatConnection(connection);
+		}
+		
+		return result;
+	}
 	
 	/**
 	 * <p>Calculates the total distance between path's starting and ending node.</p>

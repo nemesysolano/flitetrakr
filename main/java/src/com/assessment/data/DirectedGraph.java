@@ -85,7 +85,8 @@ public class DirectedGraph {
     }
     
     /**
-     * <p>Finds all paths between two nodes.</p>
+     * <p>Finds all paths between two nodes that don't have repeated elements.</p>
+     * 
      * @param start Source node.
      * @param end Destination node.
      * 
@@ -96,7 +97,7 @@ public class DirectedGraph {
    	}
    	
    	/**
-   	 * <p>Finds all paths between two nodes.</p>
+   	 * <p>Finds all paths between two nodes that don't have repeated elements.</p>
    	 * @param graph The directed graph wherein paths are sought.
    	 * @param start Source node.
    	 * @param end Destination node.
@@ -112,15 +113,62 @@ public class DirectedGraph {
     		result = depthFirstNoRoundTrip(graph, start, end);
     	}
     	
-		/* Enable this section for debugging purposes. *	
-		for(LinkedList<String> path : result) {
-			printPath(path);
-		}
-		/* */
 		return result;
     }
     
 
+
+   	/**
+   	 * <p>Finds all paths between two nodes.</p>
+   	 * @param graph The directed graph wherein paths are sought.
+   	 * @param start Source node.
+   	 * @param end Destination node.
+   	 * 
+   	 * @return A list whose elements are sublists. Each sublist represent a path from <code><b>start</b></code> to <code><b>end</b></code>.
+   	 */
+    public List<LinkedList<String>> depthFirstAll( String start, String end) {
+    	return depthFirstAll(this, start, end); 
+    	
+    }
+		
+   	/**
+   	 * <p>Finds all paths between two nodes.</p>
+   	 * @param graph The directed graph wherein paths are sought.
+   	 * @param start Source node.
+   	 * @param end Destination node.
+   	 * 
+   	 * @return A list whose elements are sublists. Each sublist represent a path from <code><b>start</b></code> to <code><b>end</b></code>.
+   	 */
+    static private List<LinkedList<String>> depthFirstAll(DirectedGraph graph, String start, String end) {
+    	List<LinkedList<String>> connections;
+    	
+		if (start.compareTo(end) == 0) {
+			connections = depthFirstRoundTrip(graph, start);
+    		
+    	} else {    	    		
+    		connections = depthFirst(graph, start, end);    		
+    	}
+		
+		List<LinkedList<String>> roundTripsFromDestination = depthFirst(graph, end, end);		
+		List<LinkedList<String>> result = new ArrayList<LinkedList<String>>();
+		
+		for(LinkedList<String> connection: connections) {						
+
+			result.add(connection);
+			
+			for(LinkedList<String> roundTrip: roundTripsFromDestination) {
+				LinkedList<String> copy = new LinkedList<String>();
+				
+				copy.addAll(connection);
+				copy.removeLast();				
+				copy.addAll(roundTrip);    				
+				result.add(copy);
+			}
+			
+		}    	
+		return result;
+    }
+    
     static private List<LinkedList<String>> depthFirstRoundTrip(DirectedGraph graph, String start) {
 		Collection<String> nodes = graph.getNodeSet();
 		HashSet<ComparableStringList> rounTrips = new HashSet<ComparableStringList>();

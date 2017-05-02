@@ -43,11 +43,11 @@ public class QueryTest {
 			query1.connectionsBelowPrice(170, "NUE", "LHR")
 		);
 		
-		
 		Assert.assertEquals(
 			"a-b-d-3, a-c-d-5, a-x-b-d-6, a-c-y-d-6",
 			query2.connectionsBelowPrice(7, "a", "d")
 		);
+		
 		
 		Assert.assertEquals(
 			"a-b-d-3, a-c-d-5",
@@ -68,6 +68,7 @@ public class QueryTest {
 			"c-z-3, c-d-e-z-5, c-y-d-e-z-6, c-z-y-d-e-z-8, c-d-e-z-y-d-e-z-10, c-y-d-e-z-y-d-e-z-11",
 			query2.connectionsBelowPrice(12, "c", "z")
 		);
+		/* */
 		
 	}
 	
@@ -123,15 +124,18 @@ public class QueryTest {
 	
 	@Test
 	public void testConnectionsWithMaximumStops() throws ParseException { //What is the price of the connection ...? 
-		AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(connections[1]);
-		Query query = new Query(adjacencyMatrix);
+		AdjacencyMatrix adjacencyMatrix1 = new AdjacencyMatrix(connections[0]);
+		AdjacencyMatrix adjacencyMatrix2 = new AdjacencyMatrix(connections[1]);	
+		Query query1 = new Query(adjacencyMatrix1);
+		Query query2 = new Query(adjacencyMatrix2);
 		
 		System.out.println(String.format("QueryTest.testConnectionsWithMaximumStops"));
-		Assert.assertEquals(5, query.connectionsWithMaximumStops(3, "a", "e"));
-		Assert.assertEquals(2, query.connectionsWithMaximumStops(2, "a", "e"));
-		Assert.assertEquals(1, query.connectionsWithMaximumStops(0, "a", "b"));
-		Assert.assertEquals(1, query.connectionsWithMaximumStops(0, "a", "c"));		
-		Assert.assertEquals(2, query.connectionsWithMaximumStops(1, "a", "d"));
+		Assert.assertEquals(2, query1.connectionsWithMaximumStops(3, "NUE", "FRA"));
+		Assert.assertEquals(5, query2.connectionsWithMaximumStops(3, "a", "e"));
+		Assert.assertEquals(2, query2.connectionsWithMaximumStops(2, "a", "e"));
+		Assert.assertEquals(1, query2.connectionsWithMaximumStops(0, "a", "b"));
+		Assert.assertEquals(1, query2.connectionsWithMaximumStops(0, "a", "c"));		
+		Assert.assertEquals(2, query2.connectionsWithMaximumStops(1, "a", "d"));
 		
 	}	
 	

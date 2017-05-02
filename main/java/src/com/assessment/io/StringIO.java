@@ -2,6 +2,7 @@ package com.assessment.io;
 
 import java.io.*;
 import java.util.ArrayList;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -82,5 +83,6 @@ public class StringIO {
 		}
 		return buffer.toString().trim();
 	}	
+
 	
 }
