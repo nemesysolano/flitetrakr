@@ -1,5 +1,7 @@
 package com.assessment.flitetrakr;
 
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 
 import org.junit.Assert;
@@ -10,9 +12,107 @@ import com.assessment.data.AdjacencyMatrix;
 
 public class SampleQuestionsTest {
 	public static final String CONNECTION1="Connections: NUE-FRA-43, NUE-AMS-67, FRA-AMS-17, FRA-LHR-27, LHR-NUE-23";
-
+	
+	AdjacencyMatrix adjacencyMatrix;
+	Query query;
+	PrintWriter writer;
+	NLQuery nlQuery;	
+	
+	public SampleQuestionsTest() throws ParseException, NoSuchMethodException, SecurityException {
+		adjacencyMatrix = new AdjacencyMatrix(CONNECTION1);
+		query = new Query(adjacencyMatrix);
+		writer = new PrintWriter(System.out);
+		nlQuery = new NLQuery(query);		
+	}
+	
+	@Test //^(What\\s+is\\s+)?(the\\s+)cheapest\\s+connection\\s+from\\s+\\w+\\s+to\\s+\\w+\\s*\\?$
+	public void testQuestion1() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		String questionVariants[] = {
+			"What  is  the  price  of  the  connection  NUE-FRA-LHR ?",
+			"price  of  the  connection  NUE-FRA-LHR?",
+			"price  of  connection  NUE-FRA-LHR?",
+			"price  connection  NUE-FRA-LHR?",
+			"price  connection  NUE-FRA-LHR",
+		};
+		
+		for(String question: questionVariants) {
+			System.out.println(nlQuery.evaluate(question));
+		}
+	}
+	
 	@Test
-	public void testSample1() throws ParseException {
+	public void testQuestion2() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		String questionVariants[] = {
+			"What  is  the  cheapest  connection  from  NUE to  AMS?",
+			"the  cheapest  connection  from  NUE to  AMS?",
+			"cheapest  connection  from  NUE to  AMS?",
+		};
+		
+		for(String question: questionVariants) {
+			nlQuery.evaluate(question);
+		}
+	}
+		
+	@Test
+	public void testQuestion3() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		String questionVariants[] = {
+			"How  many  different  connections  with  maximum  3  stops  exists  between  NUE  and  FRA ?",
+			"How many different connections with maximum 3 stops exist between NUE and FRA?",
+			"How many different connections maximum 3 stops exist between NUE and FRA?",
+			"How many different connections maximum 3 stop exist between NUE and FRA?",
+			"How many connections maximum 3 stop exist between NUE and FRA?",
+			"connections maximum 3 stop exist between NUE and FRA?",
+		};
+		
+		for(String question: questionVariants) {
+			nlQuery.evaluate(question);
+		}
+	}
+	
+	@Test
+	public void testQuestion4() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		String questionVariants[] = {
+			"How  many  different  connections  with  minimum 1  stops  exists  between  NUE  and  FRA ?",
+			"How many different connections with minimum 1 stops exist between NUE and FRA?",
+			"How many different connections minimum 1 stops exist between NUE and FRA?",
+			"How many different connections minimum 1 stop exist between NUE and FRA?",
+			"How many connections minimum 1 stop exist between NUE and FRA?",
+			"connections minimum 1 stop between NUE and FRA?"
+		};
+		
+		for(String question: questionVariants) {
+			nlQuery.evaluate(question);
+		}
+	}
+	
+	@Test
+	public void testQuestion5() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		String questionVariants[] = {
+			"How many different connections with exactly 1 stop exists between LHR and AMS?",
+			"How many connections with 1 stops exist between LHR and AMS?",
+		};
+		
+		for(String question: questionVariants) {
+			nlQuery.evaluate(question);
+		}
+	}
+	
+	@Test
+	public void testQuestion6() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
+		String questionVariants[] = {
+			"Find all connections from NUE to LHR below 170 euros?",
+			"all connections from NUE to LHR below 170 euros?",
+			"Find connections from NUE to LHR below 170 euros?",
+			"connections from NUE to LHR below 170 euros?"
+		};
+		
+		for(String question: questionVariants) {
+			nlQuery.evaluate(question);
+		}
+	}
+	
+	@Test
+	public void testSampleInput() throws ParseException {
 		AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(CONNECTION1);
 		Query query = new Query(adjacencyMatrix);
 		
