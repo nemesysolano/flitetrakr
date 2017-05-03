@@ -36,7 +36,7 @@ public class SampleQuestionsTest {
 		};
 		
 		for(String question: questionVariants) {
-			System.out.println(nlQuery.evaluate(question));
+			System.out.println(String.format("SampleQuestionsTest.testQuestion1: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
 	
@@ -48,8 +48,9 @@ public class SampleQuestionsTest {
 			"cheapest  connection  from  NUE to  AMS?",
 		};
 		
-		for(String question: questionVariants) {
-			System.out.println(nlQuery.evaluate(question));
+		
+		for(String question: questionVariants) {			
+			System.out.println(String.format("SampleQuestionsTest.testQuestion2: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
 		
@@ -66,7 +67,7 @@ public class SampleQuestionsTest {
 		};
 		
 		for(String question: questionVariants) {
-			System.out.println(nlQuery.evaluate(question));
+			System.out.println(String.format("SampleQuestionsTest.testQuestion3: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
 	
@@ -81,8 +82,8 @@ public class SampleQuestionsTest {
 			"connections minimum 1 stop between FRA and FRA?"
 		};
 		
-		for(String question: questionVariants) {
-			System.out.println(nlQuery.evaluate(question));
+		for(String question: questionVariants) {			
+			System.out.println(String.format("SampleQuestionsTest.testQuestion4: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
 	
@@ -90,11 +91,11 @@ public class SampleQuestionsTest {
 	public void testQuestion5() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
 		String questionVariants[] = {
 			"How many different connections with exactly 1 stop exists between LHR and AMS?",
-			"How many connections with 1 stops exist between LHR and AMS?",
+			"connections exactly 1 stops exist between LHR and AMS?",
 		};
-		
-		for(String question: questionVariants) {
-			nlQuery.evaluate(question);
+				
+		for(String question: questionVariants) {			
+			System.out.println(String.format("SampleQuestionsTest.testQuestion5: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
 	
@@ -108,7 +109,7 @@ public class SampleQuestionsTest {
 		};
 		
 		for(String question: questionVariants) {
-			nlQuery.evaluate(question);
+			System.out.println(String.format("SampleQuestionsTest.testQuestion6: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
 	

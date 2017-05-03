@@ -6,7 +6,8 @@ import java.io.OutputStream;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.List;
-import com.assessment.io.StringIO;
+
+import com.assessment.util.StringIO;
 
 /** FliteTrakr's command line interface.
  * @author rsolano

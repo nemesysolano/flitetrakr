@@ -9,6 +9,7 @@ import com.assessment.data.AdjacencyMatrix;
 
 public class AdjacencyMatrixTest {
 	
+	//TODO: Add test cases to validate that suggestion received from Mona are correctly implemented
 	/**
 	 * 
 	 */
@@ -18,29 +19,7 @@ public class AdjacencyMatrixTest {
 	};
 
 	
-	/**
-	 * A price list that violates implementation note 1, which demands that the whitespace is single occurrence of the ASCII '\x32' character
-	 */
-	final static String IMPLEMENTATION_NOTE1_VIOLATION = "Connections: NUE-FRA-43,\tNUE-AMS-67, FRA-AMS-17, FRA-LHR-27, LHR-NUE-23";
 	
-	/**
-	 * A price list that violates implementation note 1, which requires no whitespace between the word 'Connections' and the ':' (colon) character.
-	 */
-	final static String IMPLEMENTATION_NOTE2_VIOLATION = "Connections : NUE-FRA-43, NUE-AMS-67, FRA-AMS-17, FRA-LHR-27, LHR-NUE-23";
-	
-	/**
-	 * A price list that violates implementation note 3, which expects a whitespace between ':' and the 1st value.
-	 */
-	final static String IMPLEMENTATION_NOTE3_VIOLATION = "Connections:NUE-FRA-43, NUE-AMS-67, FRA-AMS-17, FRA-LHR-27, LHR-NUE-23";
-	
-	/**
-	 * A price list that Violates implementation note 4, which expects no whitespace between a value and the following comma.
-	 */
-	final static String IMPLEMENTATION_NOTE4_VIOLATION = "Connections: NUE-FRA-43 , NUE-AMS-67, FRA-AMS-17, FRA-LHR-27, LHR-NUE-23";
-	
-	
-	
-
 	/**
 	 * This method ensures that all valid strings are accepted by <b><code>com.assessment.flitetrakr.DataSet</code></b>'s constructor.
 	 * @throws ParseException 
@@ -80,28 +59,4 @@ public class AdjacencyMatrixTest {
 		}
 	}	
 	
-	public void testImplementationNote(int number, String connection) throws ParseException {
-		System.out.println(String.format("testImplementationNote: Confirming that price lists violating implementation note # %d are rejected.",number));
-		new AdjacencyMatrix(connection);		
-	}
-	
-	@Test(expected=ParseException.class)
-	public void testImplementationNote1() throws ParseException {
-		testImplementationNote(1, IMPLEMENTATION_NOTE1_VIOLATION);
-	}
-	
-	@Test(expected=ParseException.class)
-	public void testImplementationNote2() throws ParseException {
-		testImplementationNote(2, IMPLEMENTATION_NOTE2_VIOLATION);
-	}
-	
-	@Test(expected=ParseException.class)
-	public void testImplementationNote3() throws ParseException {
-		testImplementationNote(3, IMPLEMENTATION_NOTE3_VIOLATION);
-	}
-	
-	@Test(expected=ParseException.class)
-	public void testImplementationNote4() throws ParseException {
-		testImplementationNote(4, IMPLEMENTATION_NOTE4_VIOLATION);
-	}	
 }

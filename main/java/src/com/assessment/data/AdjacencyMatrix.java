@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.*;
 
-import com.assessment.io.StringIO;
+import com.assessment.util.StringIO;
 
 
 /**
  * <p>Adjacency matrix whose weights are the flight fares and its row/columns coordinates are mapped to airport codes.</p>
- * <p>The format of each connection will be defined by <br/><b><code>&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;</code></b>; so e.g. AMS-PDX-617. Multiple values will be separated by a comma and an optional whitespace. The line containing the price list will have the prefix <b><code>Connections:</code></b></p>
+ * <p>The format of each connection will be defined by <b><code>&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;</code></b>; so e.g. AMS-PDX-617. Multiple values will be separated by a comma and an optional whitespace. The line containing the price list will have the prefix <b><code>Connections:</code></b></p>
  * @author rsolano
  *
  */
@@ -65,9 +65,8 @@ public class AdjacencyMatrix {
 	
 	/**
 	 * <p>Parses the string representing the connections table. Airport codes are regarded as case insensitive.</p>
-	 * <p>&nbsp;</p>
 	 * 
-	 * @param line A string representing a price list; this string is the first line in the input stream.
+	 * @param connections A string representing a price list; this string is the first line in the input stream.
 	 * @throws java.text.ParseException If <b><code>connections</code></b> is not a valid connections table.
 	 */
 	public AdjacencyMatrix(String connections) throws ParseException {
@@ -88,8 +87,8 @@ public class AdjacencyMatrix {
 	
 	/**
 	 * <p>Creates the directed graph used to keep track of source and destination ends. 
-	 * @param adjacencyMatrix Adjacency matrix whose weights are the flight fares and its row/columns coordinates are mapped to airport codes.
 	 * 
+	 * @param connectionRecords Adjacency matrix whose weights are the flight fares and its row/columns coordinates are mapped to airport codes.
 	 * @return A new instance of <code><b>com.assessment.data.DirectedGraph</b></code>.
 	 */
 	private DirectedGraph createDirectedGraph(String[][] connectionRecords) {
@@ -99,13 +98,14 @@ public class AdjacencyMatrix {
 			String sourceCode = record[0];
 			String destinationCode = record[1];
 			
-			graph.addEdge(sourceCode, destinationCode);
+			graph.addUnidirectionalLink(sourceCode, destinationCode);
 		}
 		
 		return graph;
 	}
 	
 	/**
+	 * <p>Creates a map that helps to find row/col offsets by its corresponding airport code.</p>
 	 * 
 	 * @param connectionsIndex A map that indexes airport codes to <b><code>this.connectionsTable</code></b>'s row/columns.
 	 * @return This map indexes <b><code>this.connectionsTable</code></b>'s row/columns by airport codes.
@@ -122,14 +122,13 @@ public class AdjacencyMatrix {
 
 	/**
 	 * <p>Creates a two dimensional array whose elements are sub arrays that represent connection records</p>
-	 * <p>For example: <br/> if <b><code>connections == &quot;Connections: AMS-PDX-617,NUE-AMS-123, AMS-LHR-43&quot;</code></b>, then this function returns<br/>
+	 * <p>For example: if <b><code>connections == &quot;Connections: AMS-PDX-617,NUE-AMS-123, AMS-LHR-43&quot;</code></b>, then this function returns
 	 * <b><code>{{"AMS",PDX",617}, {"NUE","AMS",123}, {"AMS","LHR",43}}</code></b></p>
-	 * <p>&nbsp;</p>
 	 * 
 	 * @param connections A string representing price list.
 	 * @return A two dimensional array complying the aforementioned requirements.
 	 */
-	String[][] extractConnectionRecords(String connections) {
+	private String[][] extractConnectionRecords(String connections) {
 		int colon = connections.indexOf(':');
 		int index = 0;
 		String[] lines = connections.substring(colon+1).trim().split(CONNECTION_SEPARATOR_PATTERN);
@@ -144,6 +143,8 @@ public class AdjacencyMatrix {
 	}
 	
 	/**
+	 * <p>Creates a map that helps to find airport code offsets by its corresponding row/col offset.</p>
+	 * 
 	 * @param connectionRecords A two dimensional array whose elements are sub arrays that represent connection records. This parameter is value returned by <b><code>createConnectionsIndex</code></b>.
 	 * @return A map that indexes <b><code>this.connectionsTable</code></b>'s row/columns by airport codes.
 	 */
@@ -170,11 +171,12 @@ public class AdjacencyMatrix {
 	}
 	
 	/**
+	 * <p>Creates the internal two dimensional array that stores fare prices.</p>
 	 * 
 	 * @param connectionRecords A two dimensional array whose elements are sub arrays that represent connection records. This parameter is value returned by <b><code>createConnectionsIndex</code></b>.
 	 * @param connectionsIndex  A map that indexes <b><code>this.connectionsTable</code></b>'s row/columns by airport codes.
 	 * @return A two dimensional array contains the fare prices (in euros) between airports. 
-	 * @throws ParseException 
+	 * @throws ParseException Distance between airports is not greater than zero.
 	 */
 	private int[][] createConnectionsTable(String[][] connectionRecords, Map<String, Integer> connectionsIndex) throws ParseException {
 		int size = connectionsIndex.size();
@@ -199,15 +201,19 @@ public class AdjacencyMatrix {
 	}
 	
 	/**
+	 * <p>Looks for the price between airports <code><b>x</b></code> and <code><b>y</b></code>.</p>
+	 * 
 	 * @param x Row number.
 	 * @param y Column number. 
-	 * @return <b></code>this.connectionsTable[x][y]</code></b>
+	 * @return <b><code>this.connectionsTable[x][y]</code></b>
 	 */
 	public int get(int x, int y) {
 		return connectionsTable[x][y];
 	}
 	
 	/**
+	 * <p>Looks for the price between airports <code><b>a</b></code> and <code><b>a</b></code>.</p>
+	 * 
 	 * @param a Airport code
 	 * @param b Airport code 
 	 * @return The price corresponding to direct connection between airports a and b.
@@ -230,7 +236,8 @@ public class AdjacencyMatrix {
 	}	
 	
 	/**
-	 * <p></p>
+	 * <p>Returns the connections table size.</p>
+	 * 
 	 * @return connectionsTable.length.
 	 */
 	public int length() {
@@ -258,7 +265,7 @@ public class AdjacencyMatrix {
 
 	/**
 	 * 
-	 * @param code airport code.
+	 * @param index row/col offset
 	 * @return Returns the row/column offset for the given airport code.
 	 */
 	public String getCode(int index) {

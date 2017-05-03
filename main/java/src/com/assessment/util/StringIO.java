@@ -1,4 +1,4 @@
-package com.assessment.io;
+package com.assessment.util;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -7,16 +7,26 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * <P>Helper class containing convenience methods for reading, writing  strings.</P>
+ * <P>Helper class containing convenience methods for reading, writing and processing character strings.</P>
  * @author rsolano
  *
  */
 public class StringIO {
 
 	/**
-	 * Convenience constant for &quot;&quot; value. 
+	 * Convenience constant equals to &quot;&quot; value. 
 	 */
 	public static final String EMPTY_STRING = "";
+
+	/**
+	 * Convenience constant equals to &quot;\\s+&quot; value. 
+	 */
+	public static final String CONTINUOUS_WHITESPACE_EXPR = "\\s+";
+	
+	/**
+	 * Convenience constant equals to &quot; &quot; value. 
+	 */
+	public static final String SINGLE_WHITESPACE_STRING = " ";
 	
 	/**
 	 * Default list separator.
@@ -99,43 +109,79 @@ public class StringIO {
 			return string;
 		}
 		
-		return string.trim().replaceAll("\\s", EMPTY_STRING);
+		return string.trim().replaceAll(CONTINUOUS_WHITESPACE_EXPR, EMPTY_STRING);
 	}
 
-	
-	public static int questionMarkPos(String questionText) {
-		int end = questionText.lastIndexOf('?');
+	/**
+	 * This function is used in <code><b>NLQuery</code></b> to process the ending question mark (?).
+	 * @param source A parsed question.
+	 * @return  <code><b>questionText.lastIndexOf('?')</b></code> if questionText has a question mark ('?'), otherwise it returns <code><b>questionText.length()</b></code>
+	 */
+	public static int questionMarkPos(String source) {
+		int end = source.lastIndexOf('?');
 		
 		if(end == -1) {
-			end = questionText.length();
+			end = source.length();
 		} 		
 		
 		return end;
 	}
 	
+	/**
+	 * <p>This function is used in <code><b>NLQuery</code></b> to extract connection's starting and ending airports.</p>
+	 * <p>Examples<p>
+	 * <ul>
+	 * 	<li><code><b>getTerminals("FROM SDQ TO NYC", "FROM", "TO")</code></b> --> {&quot;SDQ&quot;,&quot;NYC&quot;}</li>
+	 * <li><code><b>getTerminals("BETWEEN SDQ AND NYC", "BETWEEN", "AND)</code></b> --> {&quot;SDQ&quot;,&quot;NYC&quot;}</li>
+	 * </ul>
+	 * @param source A text containing a substring matching the regular expression resulting from the next string concatenation: <code><b>startKeyWord + &quot;\\w+&quot; + delimiterKeyWord + &quot;\\w+&quot;</code></b> 
+	 * @param startKeyWord
+	 * @param delimiterKeyWord
+	 * @return A array of strings containing the starting and ending point
+	 */
 	public static String[] getTerminals(String source, String startKeyWord, String delimiterKeyWord) {
 		int start = source.lastIndexOf(startKeyWord) + startKeyWord.length();
 		int end = questionMarkPos(source);
-		
+		int p;
 		if(end == -1) {
 			end = source.length();
 		} 
 		
-		return source.substring(start, end).trim().split(delimiterKeyWord);
+		String [] terminals = source.substring(start, end).trim().split(delimiterKeyWord);
+		String second = terminals[1].trim();
+		
+		if(second.length() > 0 && (p = second.indexOf(' ')) > -1) {
+			terminals[1] = second.substring(0, p+1);
+		}
+		return terminals;
 	}
 	
+	/**
+	 * <p>Return the content containing between two delimiter substrings.</p>
+	 * @param source Non null/empty string containing the text we want to extract.
+	 * @param fromIndex the index from which to start the search.
+	 * @param start Starting delimiter.
+	 * @param end Ending delimiter.
+	 * @return The substring between <code><b>start</b></code> and <code><b>end</b> delimiers.
+	 */
 	public static String substring(String source, int fromIndex, String start, String end) {
 		int startPos = source.indexOf(start, fromIndex);
 		int endPos = source.indexOf(end, fromIndex);
 		
-		if(startPos == -1 && startPos > endPos) {
+		if(startPos == -1 || endPos == -1 || startPos > endPos) {
 			return null;
 		}
 		
 		return source.substring(startPos + start.length(), endPos).trim();
 	}		
 	
-	
+	/**
+	 * <p>Return the content containing between two delimiter substrings.</p>
+	 * @param source source Non null/empty string containing the text we want to extract.
+	 * @param start Starting delimiter.
+	 * @param end Ending delimiter.
+	 * @return Equivalent to <code><b>substring(source, 0, start, end);</b></code>.
+	 */
 	public static String substring(String source, String start, String end) {
 		return substring(source, 0, start, end);
 	}

@@ -1,4 +1,5 @@
 build/
+doc/
 .gradle/3.5/taskHistory/
 target/
 .gradle/3.5/fileContent/

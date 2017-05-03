@@ -13,8 +13,9 @@ public class ComparableStringList extends LinkedList<String> implements Comparab
 	private static final long serialVersionUID = 1643523667638289070L;
 
 	/**
-	 * Compares this object with the specified object for order. Returns a negative integer, zero, or a positive 
-	 * integer as this object is less than, equal to, or greater than the specified object.
+	 * <p>Compares this object with the specified object for order. Returns a negative integer, zero, or a positive 
+	 * integer as this object is less than, equal to, or greater than the specified object.</p>
+	 * 
 	 * @return An integer whose value is determined by the aforementioned criteria.
 	 */	
 	public int compareTo(ComparableStringList other) {
@@ -49,7 +50,10 @@ public class ComparableStringList extends LinkedList<String> implements Comparab
 	}
 
 	/**
+	 * Compares this list against other object
 	 * 
+	 * @param other Any reference.
+	 * @return true if the two objects are equivalent.
 	 */
 	@Override
 	public boolean equals(Object other) {
