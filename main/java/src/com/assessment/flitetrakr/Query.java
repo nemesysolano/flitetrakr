@@ -85,7 +85,9 @@ public class Query {
 	 * @return How many connections exist below the specified price ( connection price &lt; <b><code>upperPrice</code></b>).
 	 */
 	public String connectionsBelowPrice(int upperPrice, String sourceCode, String destinationCode) {		
-		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);
+		List<LinkedList<String>> connections = this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirstAll(sourceCode, destinationCode);
 		
 		String[] sorted = formatConnections(
 			connections.stream().filter(
@@ -124,6 +126,11 @@ public class Query {
 		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);			
 		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 >= stops).collect(Collectors.toList());
 		
+		/* *
+		for(String c: this.formatConnections(selected)) {
+			System.out.println(c);
+		}
+		/* */		
 		return selected.size();
 	}
 	
@@ -155,6 +162,11 @@ public class Query {
 		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);		
 		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 == stops).collect(Collectors.toList());	
 		
+		/* *
+		for(String c: this.formatConnections(selected)) {
+			System.out.println(c);
+		}
+		/* */
 		return selected.size();
 	}	
 	

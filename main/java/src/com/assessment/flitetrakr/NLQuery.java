@@ -226,6 +226,10 @@ public class NLQuery {
 		int upperPrice = Integer.parseInt(StringIO.substring(normalizedQuestionText, BELOW_KEYWORD, EURO_KEYWORD));
 		
 		String connections = query.connectionsBelowPrice(upperPrice, terminalPoints[0].trim(), terminalPoints[1].trim());
+		
+		if(connections.trim().length() == 0) {
+			return Query.CONNECTION_NOT_FOUND_ERROR;
+		}
 		return connections;
 	}
 	

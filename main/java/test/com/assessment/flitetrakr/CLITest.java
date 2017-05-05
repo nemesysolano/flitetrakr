@@ -27,7 +27,7 @@ public class CLITest {
 	 */
 	@Test
 	public void testCLIWithFileStream() throws IOException, ParseException {		
-		String dataFilePath = dataDir + File.separatorChar + "europe.txt";		
+		String dataFilePath = dataDir + File.separatorChar + "connections-2.txt";		
 		CLI cli = new CLI(CLIInputType.FILE, new InputStreamReader(new FileInputStream(dataFilePath)), new PrintWriter(System.out));
 
 		System.out.println(
@@ -37,7 +37,7 @@ public class CLITest {
 				)
 			);		
 		
-		Assert.assertEquals(9,cli.process());
+		Assert.assertEquals(10,cli.process());
 
 		
 	}

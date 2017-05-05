@@ -62,7 +62,7 @@ public class CLI {
 		String line = reader.readLine();
 		AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(line);
 		Query query = new Query(adjacencyMatrix);
-		int count = 0;
+		int count = 1;
 		
 		
 		try {
@@ -72,8 +72,9 @@ public class CLI {
 				
 				try {
 					String result = nlQuery.evaluate(line);
-					
-					output.println(result);
+					output.println(String.format("%d: %s", count, line));
+					output.println(String.format("%d: %s", count, result));
+					output.println();
 					output.flush();
 					count++;
 					
