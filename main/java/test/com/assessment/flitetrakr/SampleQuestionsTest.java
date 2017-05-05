@@ -25,6 +25,7 @@ public class SampleQuestionsTest {
 		nlQuery = new NLQuery(query);		
 	}
 	
+	/* *
 	@Test //^(What\\s+is\\s+)?(the\\s+)cheapest\\s+connection\\s+from\\s+\\w+\\s+to\\s+\\w+\\s*\\?$
 	public void testQuestion1() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, ParseException {
 		String questionVariants[] = {
@@ -112,9 +113,10 @@ public class SampleQuestionsTest {
 			System.out.println(String.format("SampleQuestionsTest.testQuestion6: %s = %s", question,  nlQuery.evaluate(question)));
 		}
 	}
+	/* */
 	
 	@Test
-	public void testSampleInput() throws ParseException {
+	public void testSampleInputWithQuery() throws ParseException {
 		AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(CONNECTION1);
 		Query query = new Query(adjacencyMatrix);
 		
@@ -144,4 +146,29 @@ public class SampleQuestionsTest {
 		
 		Assert.assertEquals("NUE-FRA-LHR-70, NUE-FRA-LHR-NUE-FRA-LHR-163", query.connectionsBelowPrice(170, "NUE", "LHR"));
 	}
+	
+	@Test
+	public void testSampleInputWithNLQuery() throws ParseException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		
+		//
+		Assert.assertEquals("70", nlQuery.evaluate("What is the price of the connection NUE-FRA-LHR?"));
+		
+		Assert.assertEquals(Query.CONNECTION_NOT_FOUND_ERROR, nlQuery.evaluate("What is the price of the connection NUE-AMS-LHR?"));
+		
+		Assert.assertEquals("93", nlQuery.evaluate("What is the price of the connection NUE-FRA-LHR-NUE?"));
+		
+		Assert.assertEquals("NUE-FRA-AMS-60", nlQuery.evaluate("What is the cheapest connection from NUE to AMS?"));
+		
+		Assert.assertEquals(Query.CONNECTION_NOT_FOUND_ERROR, nlQuery.evaluate("What is the cheapest connection from AMS to FRA?"));
+		
+		Assert.assertEquals("LHR-NUE-FRA-LHR-93", nlQuery.evaluate("What is the cheapest connection from LHR to LHR?"));
+	
+		Assert.assertEquals("2", nlQuery.evaluate("How many different connections with maximum 3 stops exists between NUE and FRA?"));
+		
+		Assert.assertEquals("1", nlQuery.evaluate("How many different connections with exactly 1 stop exists between LHR and AMS?"));
+		
+		Assert.assertEquals("NUE-FRA-LHR-70, NUE-FRA-LHR-NUE-FRA-LHR-163", nlQuery.evaluate("Find all connections from NUE to LHR below 170 Euros!"));
+		
+	}
+	
 }

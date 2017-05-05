@@ -19,6 +19,11 @@ import com.assessment.util.StringIO;
 public class Query {
 	
 	/**
+	 * <p>Convenience constant to avoid literal repetitions.</p>
+	 */
+	public static final String CONNECTION_NOT_FOUND_ERROR= "No such connection found!";
+	
+	/**
 	 * Adjacency matrix whose weights are the flight fares and its row/columns coordinates mapped to airport codes.
 	 */
 	AdjacencyMatrix adjacencyMatrix;
@@ -31,9 +36,48 @@ public class Query {
 		this.adjacencyMatrix = adjacencyMatrix;
 	}
 
+	/**
+	 * <p>Detects whether the user wants the following functions to process multiple stops @ one place:</p>
+	 * <ul>
+	 * <li><a>connectionsBelowPrice</a></li>
+	 * <li><a>connectionsWithMinimumStops</a></li>
+	 * <li><a>connectionsWithMaximumStops</a></li>
+	 * <li><a>connectionsWithExactStops</a></li>
+	 * </ul>
+	 * 
+	 * @return Returns <code><b>true</b></code> if <code><b>System.getProperty("com.assessment.flitetrakr.multiple")</b></code> is not null and equals to <code><b>&quot;true&quot;</b></code>.
+	 */
+	private boolean processMultipleStops() {
+		String multiple = System.getProperty("com.assessment.flitetrakr.multiple");
+		
+		if(multiple == null){
+			return false;
+		}
+		
+		return Boolean.parseBoolean(multiple.trim());
+	}
 	
 	/**
-	 * <p>This function finds all connections from <b></code>sourceCode</code></b> to <b><code>destinationCode</code></b> below a specified price.</p>
+	 * <p>Retrieves all connections between two airports.</p>
+	 * 
+	 * @param sourceCode Departure airport's code.
+	 * @param destinationCode Destination airport's code.
+	 * @return A linked list containing all connections between the two airports..
+	 */
+	private List<LinkedList<String>> connections(String sourceCode, String destinationCode) {
+		if(processMultipleStops()) {
+			return  this.adjacencyMatrix.
+					getDirectedGraph().
+					depthFirstAll(sourceCode, destinationCode);
+		}
+		
+		
+		return  this.adjacencyMatrix.
+				getDirectedGraph().
+				depthFirst(sourceCode, destinationCode);
+	}
+	/**
+	 * <p>This function finds all connections from <b><code>sourceCode</code></b> to <b><code>destinationCode</code></b> below a specified price.</p>
 	 * 
 	 * @param upperPrice Upper limit of the price range.
 	 * @param sourceCode Departure airport's code.
@@ -41,9 +85,7 @@ public class Query {
 	 * @return How many connections exist below the specified price ( connection price &lt; <b><code>upperPrice</code></b>).
 	 */
 	public String connectionsBelowPrice(int upperPrice, String sourceCode, String destinationCode) {		
-		List<LinkedList<String>> connections = this.adjacencyMatrix.
-				getDirectedGraph().
-				depthFirstAll(sourceCode, destinationCode);
+		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);
 		
 		String[] sorted = formatConnections(
 			connections.stream().filter(
@@ -79,10 +121,7 @@ public class Query {
 	 * @return How many connections comply with the aforementioned criteria.
 	 */
 	public int connectionsWithMinimumStops(int stops, String sourceCode, String destinationCode) {
-		List<LinkedList<String>> connections = this.adjacencyMatrix.
-				getDirectedGraph().
-				depthFirstAll(sourceCode, destinationCode);	
-		
+		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);			
 		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 >= stops).collect(Collectors.toList());
 		
 		return selected.size();
@@ -98,10 +137,7 @@ public class Query {
 	 * @return How many connections comply with the aforementioned criteria.
 	 */
 	public int connectionsWithMaximumStops(int stops, String sourceCode, String destinationCode) {
-		List<LinkedList<String>> connections = this.adjacencyMatrix.
-				getDirectedGraph().
-				depthFirstAll(sourceCode, destinationCode);	
-		
+		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);			
 		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 <= stops).collect(Collectors.toList());
 		
 		return selected.size();
@@ -116,10 +152,7 @@ public class Query {
 	 * @return How many connections comply with the aforementioned criteria.
 	 */
 	public int connectionsWithExactStops(int stops, String sourceCode, String destinationCode) {
-		List<LinkedList<String>> connections = this.adjacencyMatrix.
-				getDirectedGraph().
-				depthFirstAll(sourceCode, destinationCode);
-		
+		List<LinkedList<String>> connections = connections(sourceCode, destinationCode);		
 		List<LinkedList<String>> selected = connections.stream().filter(c -> c.size()-2 == stops).collect(Collectors.toList());	
 		
 		return selected.size();
@@ -150,9 +183,9 @@ public class Query {
 	}
 	
 	/**
-	 * p>This function addresses the question of what is the price of the connection <b><code>???-???-???</code></b>... ? </p>
+	 * <p>This function addresses the question of what is the price of the connection <b><code>???-???-???</code></b>... ? </p>
 	 * 
-	 * @param connection
+	 * @param connection A linked list of strings where each element is an airport code.
 	 * @return -1 if no connection having those codes exist, or a positive integer indicating the connection PRICE. 
 	 */
 	public int connectionPrice(LinkedList<String> connection) {
@@ -174,7 +207,7 @@ public class Query {
 	 * The returned string contains a sequence of airport codes followed by the total distance. Example <code><b>NUE-FRA-AMS-60</b></code>.
 	 */
 	public String cheapestConnection(String sourceCode, String destinationCode) {
-		final String CONNECTION_NOT_FOUND_ERROR= "No such connection found!";
+		
 		String result;
 		
 		try {
@@ -228,7 +261,7 @@ public class Query {
 	
 	/**
 	 * <p>Formats linked list of string representing a connection.</p>
-	 * <p>The resulting string will match the pattern<br/> <code><b>"&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;,.."</code></b></p>
+	 * <p>The resulting string will match the pattern <code><b>"&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;,.."</b></code></p>
 	 * 
 	 * @param connection A non null linked list of strings
 	 * @return A string compliant to the aforementioned requirement.
@@ -248,7 +281,7 @@ public class Query {
 	
 	/**
 	 * 
-	 * @param connections
+	 * @param connections Creates a array of strings where each element is list of airport codes separated by '-'.
 	 * @return An array of strings where each element is a formatted connection.
 	 */
 	private String[] formatConnections(List<LinkedList<String>> connections) {

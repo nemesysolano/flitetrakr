@@ -12,7 +12,9 @@ group = 'com.assessment'
 rootProject.libsDirName = '../target'
 
 test {
+  systemProperty "com.assessment.flitetrakr.multiple", "true"
   systemProperty "CONNECTIONS_DATA", project.projectDir
+  
   testLogging {
     events "passed", "skipped", "failed", "standardOut", "standardError"
   }

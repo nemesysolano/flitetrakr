@@ -163,7 +163,7 @@ public class DirectedGraph {
     
 
    	/**
-   	 * <p>Finds all paths containing repeated stops.</p>
+   	 * <p>Finds all paths including those containing repeated stops.</p>
    	 * 
    	 * @param sourceCode Starting airport code.
    	 * @param destinationCode Ending airport code.
@@ -175,7 +175,7 @@ public class DirectedGraph {
     }
 		
    	/**
-   	 * <p>Finds all paths containing repeated stops.</p>
+   	 * <p>Finds all paths including those containing repeated stops.</p>
    	 * 
    	 * @param graph The directed graph wherein paths are sought
    	 * @param sourceCode Starting airport code

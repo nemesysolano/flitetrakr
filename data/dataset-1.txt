@@ -1,0 +1,3 @@
+Connections: A-X-3, A-B-1, A-C-2, B-D-2, C-D-3, D-E-1, X-B-1, X-C-5, C-Z-3, E-Z-1, C-Y-3, Y-D-1, Z-Y-2
+What is the cheapest connection from A to E ?
+What is the price of the connection NUE-FRA-LHR?

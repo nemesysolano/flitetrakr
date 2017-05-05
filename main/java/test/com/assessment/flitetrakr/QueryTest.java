@@ -122,7 +122,7 @@ public class QueryTest {
 		
 		System.out.println(String.format("QueryTest.testConnectionsWithMinimumStops"));
 		Assert.assertEquals(2, query1.connectionsWithMinimumStops(1, "NUE", "LHR"));
-		Assert.assertEquals(8, query2.connectionsWithMinimumStops(6, "a", "e"));
+		Assert.assertEquals(3, query2.connectionsWithMinimumStops(8, "a", "e"));
 		Assert.assertEquals(8, query2.connectionsWithMinimumStops(2, "x", "e"));
 		Assert.assertEquals(1, query2.connectionsWithMinimumStops(1, "a", "b"));
 	}	

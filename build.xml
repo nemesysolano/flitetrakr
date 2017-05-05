@@ -55,7 +55,8 @@
 
 		<junit fork="true">
 			<jvmarg value="-DCONNECTIONS_DATA=${basedir}" />
-
+			<jvmarg value="-Dcom.assessment.flitetrakr.multiple=true" />
+			
 			<classpath>
 				<path refid="classpath.test" />
 			</classpath>
