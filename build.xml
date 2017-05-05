@@ -76,7 +76,12 @@
 		<mkdir dir="${target}" />
 
 		<!-- Put everything in ${build} into the flitetrakr-1.0-SNAPSHOT.jar file -->
-		<jar jarfile="${target}/flitetrakr-1.0-SNAPSHOT.jar" basedir="${build}" />
+		<jar jarfile="${target}/flitetrakr-1.0-SNAPSHOT.jar" basedir="${build}">
+            <manifest>
+                <attribute name="Main-Class" value="com.assessment.flitetrakr.CLI"/>
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+            </manifest>			
+		</jar>
 	</target>
 
 	<target name="clean" description="clean up">
