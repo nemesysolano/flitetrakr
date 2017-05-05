@@ -57,7 +57,7 @@ Make sure that you are connected to the Internet such that build system can reso
 The *flitetrakr/data* folder contains two files (namely *connections-1.txt* and *connections-2.txt*). For each scenario represented by these files, I pasted the corresponding directed graph and a output collected from command line.  
 
 ### First Scenario: connections-1.txt.
-![alt text](images/connections-2.png "Graph 1: Sample Input")
+![alt text](images/connections-1.png "Graph 1: Sample Input")
 
 This file is a directed graph extracted from a text book. The following listing shows a couple of interesting queries.
 
