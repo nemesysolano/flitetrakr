@@ -164,5 +164,5 @@ $
 
 ```
 
-Since all links between to airports are unidirectional (as implied by the connection format **<code-of-departure-airport>-<code-of-arrival-airport>-<price-in-euro>**), it is quite straight forward to understand why question #7 yield different answers by just taking a look at following directed graph (drawn by hand):
+Since all links between two airports are unidirectional (as implied by the connection format **&lt;code-of-departure-airport&gt;-&lt;code-of-arrival-airport&gt;-&lt;price-in-euro&gt;**), it is quite straight forward to understand why question #7 yield different answers by just taking a look at following directed graph (drawn by hand):
  
